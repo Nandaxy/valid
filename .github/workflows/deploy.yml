@@ -1,16 +1,23 @@
-name: Deploy
+name: Deploy to Cloudflare Workers
+
 on:
   push:
-    paths: 
-      - 'src/**'
-  workflow_dispatch:
+    branches:
+      - main
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Publish
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install wrangler
+        run: npm install -g wrangler
+
+      - name: Publish to Cloudflare Workers
+        run: wrangler publish
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
